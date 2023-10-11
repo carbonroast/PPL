@@ -20,5 +20,11 @@ public class Board : MonoBehaviour
         int rand = Random.Range(0, this.blocks.Length);
         BlockData block = this.blocks[rand];
         this.tilemap.SetTile(Vector3Int.zero,block.tile);
+        this.tilemap.SetTile(Vector3Int.right,block.tile);
+    }
+
+    public bool ValidMove(Vector3Int position)
+    {
+        return false;
     }
 }
