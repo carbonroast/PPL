@@ -218,7 +218,6 @@ GameObject:
   - component: {fileID: 126948799}
   - component: {fileID: 126948801}
   - component: {fileID: 126948800}
-  - component: {fileID: 126948802}
   m_Layer: 0
   m_Name: Tilemap
   m_TagString: Untagged
@@ -366,29 +365,6 @@ Tilemap:
     e31: 0
     e32: 0
     e33: 1
---- !u!114 &126948802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 126948798}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dc02dfdde70af2f4bb896032a5861c18, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  blocks:
-  - block: 0
-    tile: {fileID: 11400000, guid: 9422561184fed86439d3452c35a6cfa8, type: 2}
-  - block: 1
-    tile: {fileID: 11400000, guid: 7f018e3fcfca8674094fa2ac5c34d5c3, type: 2}
-  - block: 2
-    tile: {fileID: 11400000, guid: 641c7a78a16c606409aa1408b577ca97, type: 2}
-  - block: 3
-    tile: {fileID: 11400000, guid: 96f452d7614ce9b419d5211eee989fa2, type: 2}
-  - block: 4
-    tile: {fileID: 11400000, guid: 374f14bee5b3aa24cbed579c4f71b95f, type: 2}
 --- !u!1 &460166505
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,6 +375,8 @@ GameObject:
   m_Component:
   - component: {fileID: 460166507}
   - component: {fileID: 460166506}
+  - component: {fileID: 460166508}
+  - component: {fileID: 460166509}
   m_Layer: 0
   m_Name: Board
   m_TagString: Untagged
@@ -434,6 +412,44 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &460166508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460166505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc02dfdde70af2f4bb896032a5861c18, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blocks:
+  - block: 0
+    tile: {fileID: 11400000, guid: 9422561184fed86439d3452c35a6cfa8, type: 2}
+  - block: 1
+    tile: {fileID: 11400000, guid: 7f018e3fcfca8674094fa2ac5c34d5c3, type: 2}
+  - block: 2
+    tile: {fileID: 11400000, guid: 641c7a78a16c606409aa1408b577ca97, type: 2}
+  - block: 3
+    tile: {fileID: 11400000, guid: 96f452d7614ce9b419d5211eee989fa2, type: 2}
+  - block: 4
+    tile: {fileID: 11400000, guid: 374f14bee5b3aa24cbed579c4f71b95f, type: 2}
+  playerData:
+    tile: {fileID: 11400000, guid: 3ab94db44fde0504a818f35a3a141a11, type: 2}
+  boardSize: {x: 10, y: 20}
+--- !u!114 &460166509
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 460166505}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 69331ae9238b8b248bde83af86edbee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1818662115
 GameObject:
   m_ObjectHideFlags: 0
