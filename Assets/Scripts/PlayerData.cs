@@ -9,6 +9,6 @@ public struct PlayerData
 
     public void Initialize()
     {
-        cells =  new Vector3Int[] {new Vector3Int(1,0,0), new Vector3Int(0,0,0)};
+        cells =  new Vector3Int[] {new Vector3Int(0,0,0), new Vector3Int(1,0,0)};
     }
 }

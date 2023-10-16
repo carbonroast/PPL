@@ -1,60 +1,72 @@
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using System.Linq;
+using System.Collections.Generic;
 public class Board : MonoBehaviour 
 {
-    public Tilemap tilemap {get; private set;}
+    public Tilemap boardmap {get; private set;}
+    public Tilemap playermap {get; private set;}
     public BlockData[] blocks;
     public PlayerData playerData;
     public PlayerController playerController {get; private set;}
+    public BlockController blockController {get; private set;}
     
+    public ImportMap map {get; private set;}
     public Vector2Int boardSize;
 
     public RectInt bounds
     {
         get
         {
-            Vector2Int position = new Vector2Int(-this.boardSize.x / 2, -this.boardSize.y / 2);
-            return new RectInt(position, this.boardSize);
+            return new RectInt(new Vector2Int(0,0), this.boardSize);
         }
     }
     private void Awake() {
-        this.tilemap = GetComponentInChildren<Tilemap>();
+        this.boardmap = Component.FindObjectsOfType<Tilemap>().ToList().Find(z => z.name == "Boardmap");
+        this.playermap = Component.FindObjectsOfType<Tilemap>().ToList().Find(z => z.name == "Playermap");
         this.playerData.Initialize();
+        this.blockController = GetComponent<BlockController>();
         this.playerController = GetComponent<PlayerController>();
-
+        this.map = GetComponent<ImportMap>();
     }
     private void Start()
     {
+        Debug.Log(bounds);
+        this.blockController.Initialize(this, boardmap);
         SpawnPlayer();
-        //SpawnBlock();
+        GenerateBoard(this.map.GetMap());
     }
 
-    public void SetTile(Vector3Int cell, Tile tile)
+    public void SetTile(Tilemap tileMap, Vector3Int cell, Tile tile)
     {
-        this.tilemap.SetTile(cell, tile);
+        tileMap.SetTile(cell, tile);
     }
 
-    public void ClearTile(Vector3Int cell)
+    public void ClearTile(Tilemap tileMap, Vector3Int cell)
     {
-        this.tilemap.SetTile(cell, null);
+        tileMap.SetTile(cell, null);
     }
-    void SpawnBlock() 
-    {
-        int rand = Random.Range(0, this.blocks.Length);
-        BlockData blockData = this.blocks[rand];
-        this.tilemap.SetTile(Vector3Int.zero,blockData.tile);
-        this.tilemap.SetTile(Vector3Int.right,blockData.tile);
-    }
+
 
     void SpawnPlayer()
     {
         Vector3Int position = new Vector3Int(0,6,0);
-        this.playerController.Initialize(this, position, playerData);
+        this.playerController.Initialize(this, playermap, position, playerData);
         for (int i=0; i < playerController.cells.Length; i++){
-            this.tilemap.SetTile(position + playerController.cells[i], playerController.tile);
+            SetTile(playermap, position + playerController.cells[i], playerController.tile);
         }
     }
 
+    public void SwapBlock(Vector3Int cellLeft, Vector3Int cellRight)
+    {
+        Tile tileLeft = (Tile)this.boardmap.GetTile(cellLeft);
+        Tile tileRight = (Tile)this.boardmap.GetTile(cellRight);
+        SetTile(boardmap, cellLeft, tileRight);
+        SetTile(boardmap, cellRight, tileLeft);
+        blockController.CheckBlockState(cellLeft);
+        blockController.CheckBlockState(cellRight);
+    }
     public bool ValidMove(PlayerController playercontroller, Vector3Int direction)
     {
         foreach(Vector3Int cell in playerController.cells){
@@ -65,5 +77,19 @@ public class Board : MonoBehaviour
             }
         }
         return true;
+    }
+
+    void GenerateBoard(Dictionary<Color, List<Vector3Int>> mapPreset)
+    {
+        int color = 0;
+        foreach(Color key in mapPreset.Keys){
+            if(key != Color.white){
+                BlockData blockData = this.blocks[color];
+                foreach(Vector3Int cell in mapPreset[key]){
+                    SetTile(boardmap, cell, blockData.tile);
+                }
+            }
+            color++;
+        }
     }
 }
