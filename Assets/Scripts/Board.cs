@@ -64,8 +64,8 @@ public class Board : MonoBehaviour
         Tile tileRight = (Tile)this.boardmap.GetTile(cellRight);
         SetTile(boardmap, cellLeft, tileRight);
         SetTile(boardmap, cellRight, tileLeft);
-        blockController.CheckBlockState(cellLeft);
-        blockController.CheckBlockState(cellRight);
+
+        blockController.CheckBoardState(new List<Vector3Int>{cellLeft, cellRight});  
     }
     public bool ValidMove(PlayerController playercontroller, Vector3Int direction)
     {

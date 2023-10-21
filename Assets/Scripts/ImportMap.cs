@@ -12,11 +12,12 @@ public class ImportMap : MonoBehaviour
     void Awake()
     {
         texture = sprite.texture as Texture2D;
+        ReadSprite(texture);
 
     }
     void Start()
     {
-        ReadSprite(texture);
+        
     }
 
     void ReadSprite(Texture2D texture)
@@ -34,12 +35,12 @@ public class ImportMap : MonoBehaviour
                 }
             }
         }
-        foreach(Color key in blockPreset.Keys){
-            Debug.Log($"KEY: {key}");
-            foreach(Vector3Int cell in blockPreset[key]){
-                Debug.Log(cell);
-            }
-        }
+        // foreach(Color key in blockPreset.Keys){
+        //     Debug.Log($"KEY: {key}");
+        //     foreach(Vector3Int cell in blockPreset[key]){
+        //         Debug.Log(cell);
+        //     }
+        // }
     }
 
     public Dictionary<Color, List<Vector3Int>> GetMap(){

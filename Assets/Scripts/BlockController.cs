@@ -13,6 +13,11 @@ public class BlockController : MonoBehaviour
     public Board board {get; private set;}
     public Tilemap boardmap {get; private set;}
 
+    bool canClearBlocks = true;
+    float stopTimeAmount = 3.0f;
+    float stopTimeInterval;
+    bool stopTimeSet = false;
+
     // Start is called before the first frame update
 
     public void Initialize(Board board, Tilemap map) 
@@ -33,31 +38,33 @@ public class BlockController : MonoBehaviour
 
     }
 
-    public void CheckBlockState(Vector3Int cell)
+    public void CheckBoardState(List<Vector3Int> cells)
     {
-        List<Vector3Int> dropCells = new List<Vector3Int>();
 
-        if(boardmap.GetTile(cell) == null){ //Cell empty, make above cells fall
-            List<Vector3Int> aboveCells = GetTilesinColumn(cell);
-            for(int i=0; i< aboveCells.Count;  i++){
-                dropCells.Add(Fall(aboveCells[i]));
-            }
-        }
-        else { //Check if cell needs to fall and do logic
-            dropCells.Add(Fall(cell));
-        }
-
-        // Check to see if any matches were made
-        foreach(Vector3Int dropCell in dropCells){
-            List<Vector3Int> matchList = FindMatchingSurroundingTiles(dropCell);
-            if(matchList.Any()){
-                LineCompletion(matchList);
-                foreach(Vector3Int completedDropCell in matchList){
-                    CheckBlockState(completedDropCell);
+        if(canClearBlocks)
+        {
+            List<List<Vector3Int>> clearedBlocksList = new List<List<Vector3Int>>();
+            foreach(Vector3Int cell in cells){
+                clearedBlocksList = CheckBlockState(cell);
+                if(clearedBlocksList.Any()){
+                    foreach(List<Vector3Int> listOfBlocks in clearedBlocksList){
+                        LineCompletion(listOfBlocks);
+                    }
                 }
-
             }
+            StopTime();
+            // drop all blocks 
+            if(clearedBlocksList.Any()){
+                foreach(List<Vector3Int> line in clearedBlocksList){
+                    CheckBoardState(line);
+                }
+            }
+
+        } 
+        else {
+            StartCoroutine(WaitUntilInterval(cells));
         }
+
     }
 
 
@@ -149,4 +156,51 @@ public class BlockController : MonoBehaviour
             this.boardmap.SetTile(cell, null);
         }
     }
+
+    public List<List<Vector3Int>> CheckBlockState(Vector3Int cell)
+    {
+        List<Vector3Int> dropCells = new List<Vector3Int>();
+
+        if(boardmap.GetTile(cell) == null){ //Cell empty, make above cells fall
+            List<Vector3Int> aboveCells = GetTilesinColumn(cell);
+            for(int i=0; i< aboveCells.Count;  i++){
+                dropCells.Add(Fall(aboveCells[i]));
+            }
+        }
+        else { //Check if cell needs to fall and do logic
+            dropCells.Add(Fall(cell));
+        }
+
+        // Check to see if any matches were made
+        List<List<Vector3Int>> matchList = new List<List<Vector3Int>>();
+        foreach(Vector3Int dropCell in dropCells){
+            matchList.Add(FindMatchingSurroundingTiles(dropCell));
+        } 
+        return matchList;
+    }
+
+
+    public void StopTime()
+    {
+        if (!stopTimeSet){
+            stopTimeInterval = Time.time + stopTimeAmount;
+            canClearBlocks = false;
+            stopTimeSet = true;
+            StartCoroutine(ResetClearBlocks());
+        }
+    }
+
+    IEnumerator ResetClearBlocks()
+    {
+        Debug.Log($"Wait until {stopTimeInterval}");
+        yield return new WaitUntil(() => Time.time > stopTimeInterval);
+        canClearBlocks = true;
+        stopTimeSet = false;
+        Debug.Log($"{stopTimeInterval}: Reset");
+    }
+    IEnumerator WaitUntilInterval(List<Vector3Int> cells)
+    {
+        yield return new WaitUntil(() => canClearBlocks == true);
+        CheckBoardState(cells);
+    } 
 }
